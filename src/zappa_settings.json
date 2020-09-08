@@ -1,0 +1,9 @@
+{
+    "dev": {
+        "app_function": "main.app",
+        "profile_name": "scottwgibson",
+        "project_name": "src",
+        "runtime": "python3.8",
+        "s3_bucket": "zappa-3nwb7uwm4"
+    }
+}

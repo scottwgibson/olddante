@@ -17,9 +17,9 @@ export class OldDanteStack extends cdk.Stack {
 
     const lambda = new Function(this, this.stackName + "Lambda", {
       functionName: this.stackName + "Lambda",
-      handler: "main.my_handler",
+      handler: "handler.lambda_handler",
       runtime: Runtime.PYTHON_3_7,
-      code: Code.fromAsset('src'),
+      code: Code.fromAsset('src/lambda.zip'),
       memorySize: 512,
       timeout: cdk.Duration.seconds(60),
       environment: {

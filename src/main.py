@@ -4,12 +4,15 @@ from pathlib import Path
 import os
 import random
 import _pickle as cPickle
+from flask import Flask
 
 s3 = boto3.client('s3')
 bucket = os.environ['bucketName']
 key = 'markov.state'
 location = '/tmp/markov.state'
 s3.download_file(bucket, key, location)
+
+app = Flask(__name__)
 
 class MarkovBot:
     MAXGEN = 1000
@@ -41,9 +44,21 @@ class MarkovBot:
 
         return text
 
-def my_handler(event, context):
+@app.route('/', methods=['GET', 'POST'])
+def basePath():
     bot = MarkovBot(location = location)
-    
-    return { 
-        'message' : bot.generate()
-    }  
+
+    data = {
+        'message': bot.generate()
+    }
+    return (
+        json.dumps(data, indent=4, sort_keys=True),
+        200,
+        {'Content-Type': 'application/json'}
+    )
+
+if __name__ == "__main__":
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
+    logger.addHandler(logging.StreamHandler())
+    app.run(host="0.0.0.0", port="3000")

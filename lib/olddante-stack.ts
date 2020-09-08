@@ -3,6 +3,7 @@ import { StackProps } from '@aws-cdk/core';
 import { Function, Runtime, Code } from "@aws-cdk/aws-lambda"
 import { LambdaIntegration, MethodLoggingLevel, RestApi } from "@aws-cdk/aws-apigateway"
 import { Bucket, BlockPublicAccess} from "@aws-cdk/aws-s3"
+import { StringParameter } from '@aws-cdk/aws-ssm';
 
 export class OldDanteStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -25,7 +26,12 @@ export class OldDanteStack extends cdk.Stack {
         bucketName: bucket.bucketName
       }
     })
-
     bucket.grantRead(lambda)
+
+    StringParameter.fromStringParameterName(this, 'SlackBotToken', '/olddante/slack/bot_token')
+      .grantRead(lambda);
+
+    StringParameter.fromStringParameterName(this, 'SlackSigningSecret', '/olddante/slack/signing_secret')
+      .grantRead(lambda)
   }
 }

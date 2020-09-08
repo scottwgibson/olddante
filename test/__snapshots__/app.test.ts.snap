@@ -3,17 +3,25 @@
 exports[`Empty Stack 1`] = `
 Object {
   "Parameters": Object {
-    "AssetParametersb1b87794d2783e1284a450b7d45ccb82c477209c5dec34cbb743d00ec11c1059ArtifactHash373ED86A": Object {
-      "Description": "Artifact hash for asset \\"b1b87794d2783e1284a450b7d45ccb82c477209c5dec34cbb743d00ec11c1059\\"",
+    "AssetParameters348ff99a28d930f21c3d99fe76ac7759ec0c0cdfb9598f7e433d9d0971b49f14ArtifactHash6B2FB1FA": Object {
+      "Description": "Artifact hash for asset \\"348ff99a28d930f21c3d99fe76ac7759ec0c0cdfb9598f7e433d9d0971b49f14\\"",
       "Type": "String",
     },
-    "AssetParametersb1b87794d2783e1284a450b7d45ccb82c477209c5dec34cbb743d00ec11c1059S3Bucket461D4760": Object {
-      "Description": "S3 bucket for asset \\"b1b87794d2783e1284a450b7d45ccb82c477209c5dec34cbb743d00ec11c1059\\"",
+    "AssetParameters348ff99a28d930f21c3d99fe76ac7759ec0c0cdfb9598f7e433d9d0971b49f14S3Bucket9F053FB6": Object {
+      "Description": "S3 bucket for asset \\"348ff99a28d930f21c3d99fe76ac7759ec0c0cdfb9598f7e433d9d0971b49f14\\"",
       "Type": "String",
     },
-    "AssetParametersb1b87794d2783e1284a450b7d45ccb82c477209c5dec34cbb743d00ec11c1059S3VersionKey09A48FFB": Object {
-      "Description": "S3 key for asset version \\"b1b87794d2783e1284a450b7d45ccb82c477209c5dec34cbb743d00ec11c1059\\"",
+    "AssetParameters348ff99a28d930f21c3d99fe76ac7759ec0c0cdfb9598f7e433d9d0971b49f14S3VersionKey112A6715": Object {
+      "Description": "S3 key for asset version \\"348ff99a28d930f21c3d99fe76ac7759ec0c0cdfb9598f7e433d9d0971b49f14\\"",
       "Type": "String",
+    },
+    "SlackBotTokenParameter": Object {
+      "Default": "/olddante/slack/bot_token",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+    "SlackSigningSecretParameter": Object {
+      "Default": "/olddante/slack/signing_secret",
+      "Type": "AWS::SSM::Parameter::Value<String>",
     },
   },
   "Resources": Object {
@@ -38,7 +46,7 @@ Object {
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParametersb1b87794d2783e1284a450b7d45ccb82c477209c5dec34cbb743d00ec11c1059S3Bucket461D4760",
+            "Ref": "AssetParameters348ff99a28d930f21c3d99fe76ac7759ec0c0cdfb9598f7e433d9d0971b49f14S3Bucket9F053FB6",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -51,7 +59,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersb1b87794d2783e1284a450b7d45ccb82c477209c5dec34cbb743d00ec11c1059S3VersionKey09A48FFB",
+                          "Ref": "AssetParameters348ff99a28d930f21c3d99fe76ac7759ec0c0cdfb9598f7e433d9d0971b49f14S3VersionKey112A6715",
                         },
                       ],
                     },
@@ -64,7 +72,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParametersb1b87794d2783e1284a450b7d45ccb82c477209c5dec34cbb743d00ec11c1059S3VersionKey09A48FFB",
+                          "Ref": "AssetParameters348ff99a28d930f21c3d99fe76ac7759ec0c0cdfb9598f7e433d9d0971b49f14S3VersionKey112A6715",
                         },
                       ],
                     },
@@ -82,7 +90,7 @@ Object {
           },
         },
         "FunctionName": "MyTestStackLambda",
-        "Handler": "handler.lambda_handler",
+        "Handler": "main.my_handler",
         "MemorySize": 512,
         "Role": Object {
           "Fn::GetAtt": Array [
@@ -159,6 +167,64 @@ Object {
                   ],
                 },
               ],
+            },
+            Object {
+              "Action": Array [
+                "ssm:DescribeParameters",
+                "ssm:GetParameters",
+                "ssm:GetParameter",
+                "ssm:GetParameterHistory",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":ssm:",
+                    Object {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":parameter/olddante/slack/bot_token",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "ssm:DescribeParameters",
+                "ssm:GetParameters",
+                "ssm:GetParameter",
+                "ssm:GetParameterHistory",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    "arn:",
+                    Object {
+                      "Ref": "AWS::Partition",
+                    },
+                    ":ssm:",
+                    Object {
+                      "Ref": "AWS::Region",
+                    },
+                    ":",
+                    Object {
+                      "Ref": "AWS::AccountId",
+                    },
+                    ":parameter/olddante/slack/signing_secret",
+                  ],
+                ],
+              },
             },
           ],
           "Version": "2012-10-17",

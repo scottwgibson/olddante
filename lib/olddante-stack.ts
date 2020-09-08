@@ -33,5 +33,20 @@ export class OldDanteStack extends cdk.Stack {
 
     StringParameter.fromStringParameterName(this, 'SlackSigningSecret', '/olddante/slack/signing_secret')
       .grantRead(lambda)
+
+
+    const api = new RestApi(this, this.stackName + "RestApi", {
+        deployOptions: {
+            stageName: "prod",
+            metricsEnabled: true,
+            loggingLevel: MethodLoggingLevel.INFO,
+            dataTraceEnabled: true,
+        },
+      })
+    const integration = new LambdaIntegration(lambda, {})
+    api.root.addMethod("GET", integration)
+    const slack = api.root.addResource('slack');
+    const events = slack.addResource('events')
+    events.addMethod("POST", integration)
   }
 }

@@ -2,17 +2,45 @@
 
 exports[`Empty Stack 1`] = `
 Object {
+  "Outputs": Object {
+    "MyTestStackRestApiEndpointFF4CBA1F": Object {
+      "Value": Object {
+        "Fn::Join": Array [
+          "",
+          Array [
+            "https://",
+            Object {
+              "Ref": "MyTestStackRestApi739A2852",
+            },
+            ".execute-api.",
+            Object {
+              "Ref": "AWS::Region",
+            },
+            ".",
+            Object {
+              "Ref": "AWS::URLSuffix",
+            },
+            "/",
+            Object {
+              "Ref": "MyTestStackRestApiDeploymentStageprodABCD6224",
+            },
+            "/",
+          ],
+        ],
+      },
+    },
+  },
   "Parameters": Object {
-    "AssetParameters348ff99a28d930f21c3d99fe76ac7759ec0c0cdfb9598f7e433d9d0971b49f14ArtifactHash6B2FB1FA": Object {
-      "Description": "Artifact hash for asset \\"348ff99a28d930f21c3d99fe76ac7759ec0c0cdfb9598f7e433d9d0971b49f14\\"",
+    "AssetParameters348b645ed665777029bbd238d1ec1f95b0f219594cd596a566e6ae3dd95743c0ArtifactHashCADD2773": Object {
+      "Description": "Artifact hash for asset \\"348b645ed665777029bbd238d1ec1f95b0f219594cd596a566e6ae3dd95743c0\\"",
       "Type": "String",
     },
-    "AssetParameters348ff99a28d930f21c3d99fe76ac7759ec0c0cdfb9598f7e433d9d0971b49f14S3Bucket9F053FB6": Object {
-      "Description": "S3 bucket for asset \\"348ff99a28d930f21c3d99fe76ac7759ec0c0cdfb9598f7e433d9d0971b49f14\\"",
+    "AssetParameters348b645ed665777029bbd238d1ec1f95b0f219594cd596a566e6ae3dd95743c0S3Bucket78AF96F1": Object {
+      "Description": "S3 bucket for asset \\"348b645ed665777029bbd238d1ec1f95b0f219594cd596a566e6ae3dd95743c0\\"",
       "Type": "String",
     },
-    "AssetParameters348ff99a28d930f21c3d99fe76ac7759ec0c0cdfb9598f7e433d9d0971b49f14S3VersionKey112A6715": Object {
-      "Description": "S3 key for asset version \\"348ff99a28d930f21c3d99fe76ac7759ec0c0cdfb9598f7e433d9d0971b49f14\\"",
+    "AssetParameters348b645ed665777029bbd238d1ec1f95b0f219594cd596a566e6ae3dd95743c0S3VersionKey6DB321C2": Object {
+      "Description": "S3 key for asset version \\"348b645ed665777029bbd238d1ec1f95b0f219594cd596a566e6ae3dd95743c0\\"",
       "Type": "String",
     },
     "SlackBotTokenParameter": Object {
@@ -46,7 +74,7 @@ Object {
       "Properties": Object {
         "Code": Object {
           "S3Bucket": Object {
-            "Ref": "AssetParameters348ff99a28d930f21c3d99fe76ac7759ec0c0cdfb9598f7e433d9d0971b49f14S3Bucket9F053FB6",
+            "Ref": "AssetParameters348b645ed665777029bbd238d1ec1f95b0f219594cd596a566e6ae3dd95743c0S3Bucket78AF96F1",
           },
           "S3Key": Object {
             "Fn::Join": Array [
@@ -59,7 +87,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters348ff99a28d930f21c3d99fe76ac7759ec0c0cdfb9598f7e433d9d0971b49f14S3VersionKey112A6715",
+                          "Ref": "AssetParameters348b645ed665777029bbd238d1ec1f95b0f219594cd596a566e6ae3dd95743c0S3VersionKey6DB321C2",
                         },
                       ],
                     },
@@ -72,7 +100,7 @@ Object {
                       "Fn::Split": Array [
                         "||",
                         Object {
-                          "Ref": "AssetParameters348ff99a28d930f21c3d99fe76ac7759ec0c0cdfb9598f7e433d9d0971b49f14S3VersionKey112A6715",
+                          "Ref": "AssetParameters348b645ed665777029bbd238d1ec1f95b0f219594cd596a566e6ae3dd95743c0S3VersionKey6DB321C2",
                         },
                       ],
                     },
@@ -90,7 +118,7 @@ Object {
           },
         },
         "FunctionName": "MyTestStackLambda",
-        "Handler": "main.my_handler",
+        "Handler": "handler.lambda_handler",
         "MemorySize": 512,
         "Role": Object {
           "Fn::GetAtt": Array [
@@ -237,6 +265,359 @@ Object {
         ],
       },
       "Type": "AWS::IAM::Policy",
+    },
+    "MyTestStackRestApi739A2852": Object {
+      "Properties": Object {
+        "Name": "MyTestStackRestApi",
+      },
+      "Type": "AWS::ApiGateway::RestApi",
+    },
+    "MyTestStackRestApiAccount86D2457D": Object {
+      "DependsOn": Array [
+        "MyTestStackRestApi739A2852",
+      ],
+      "Properties": Object {
+        "CloudWatchRoleArn": Object {
+          "Fn::GetAtt": Array [
+            "MyTestStackRestApiCloudWatchRoleC933809B",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "AWS::ApiGateway::Account",
+    },
+    "MyTestStackRestApiCloudWatchRoleC933809B": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "apigateway.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "MyTestStackRestApiDeploymentC23C6DCE72352015be33c298c8c03590ebe77d6a": Object {
+      "DependsOn": Array [
+        "MyTestStackRestApiGET833477D3",
+        "MyTestStackRestApislackeventsPOSTD005E2F3",
+        "MyTestStackRestApislackevents0A81D4F3",
+        "MyTestStackRestApislack784D51A5",
+      ],
+      "Properties": Object {
+        "Description": "Automatically created by the RestApi construct",
+        "RestApiId": Object {
+          "Ref": "MyTestStackRestApi739A2852",
+        },
+      },
+      "Type": "AWS::ApiGateway::Deployment",
+    },
+    "MyTestStackRestApiDeploymentStageprodABCD6224": Object {
+      "Properties": Object {
+        "DeploymentId": Object {
+          "Ref": "MyTestStackRestApiDeploymentC23C6DCE72352015be33c298c8c03590ebe77d6a",
+        },
+        "MethodSettings": Array [
+          Object {
+            "DataTraceEnabled": true,
+            "HttpMethod": "*",
+            "LoggingLevel": "INFO",
+            "MetricsEnabled": true,
+            "ResourcePath": "/*",
+          },
+        ],
+        "RestApiId": Object {
+          "Ref": "MyTestStackRestApi739A2852",
+        },
+        "StageName": "prod",
+      },
+      "Type": "AWS::ApiGateway::Stage",
+    },
+    "MyTestStackRestApiGET833477D3": Object {
+      "Properties": Object {
+        "AuthorizationType": "NONE",
+        "HttpMethod": "GET",
+        "Integration": Object {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":apigateway:",
+                Object {
+                  "Ref": "AWS::Region",
+                },
+                ":lambda:path/2015-03-31/functions/",
+                Object {
+                  "Fn::GetAtt": Array [
+                    "MyTestStackLambdaE1C4A331",
+                    "Arn",
+                  ],
+                },
+                "/invocations",
+              ],
+            ],
+          },
+        },
+        "ResourceId": Object {
+          "Fn::GetAtt": Array [
+            "MyTestStackRestApi739A2852",
+            "RootResourceId",
+          ],
+        },
+        "RestApiId": Object {
+          "Ref": "MyTestStackRestApi739A2852",
+        },
+      },
+      "Type": "AWS::ApiGateway::Method",
+    },
+    "MyTestStackRestApiGETApiPermissionMyTestStackMyTestStackRestApi1CD3A8FAGET50DFD3EA": Object {
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "MyTestStackLambdaE1C4A331",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ":",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              ":",
+              Object {
+                "Ref": "MyTestStackRestApi739A2852",
+              },
+              "/",
+              Object {
+                "Ref": "MyTestStackRestApiDeploymentStageprodABCD6224",
+              },
+              "/GET/",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "MyTestStackRestApiGETApiPermissionTestMyTestStackMyTestStackRestApi1CD3A8FAGETEB6EDBC9": Object {
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "MyTestStackLambdaE1C4A331",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ":",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              ":",
+              Object {
+                "Ref": "MyTestStackRestApi739A2852",
+              },
+              "/test-invoke-stage/GET/",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "MyTestStackRestApislack784D51A5": Object {
+      "Properties": Object {
+        "ParentId": Object {
+          "Fn::GetAtt": Array [
+            "MyTestStackRestApi739A2852",
+            "RootResourceId",
+          ],
+        },
+        "PathPart": "slack",
+        "RestApiId": Object {
+          "Ref": "MyTestStackRestApi739A2852",
+        },
+      },
+      "Type": "AWS::ApiGateway::Resource",
+    },
+    "MyTestStackRestApislackevents0A81D4F3": Object {
+      "Properties": Object {
+        "ParentId": Object {
+          "Ref": "MyTestStackRestApislack784D51A5",
+        },
+        "PathPart": "events",
+        "RestApiId": Object {
+          "Ref": "MyTestStackRestApi739A2852",
+        },
+      },
+      "Type": "AWS::ApiGateway::Resource",
+    },
+    "MyTestStackRestApislackeventsPOSTApiPermissionMyTestStackMyTestStackRestApi1CD3A8FAPOSTslackevents49F4862D": Object {
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "MyTestStackLambdaE1C4A331",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ":",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              ":",
+              Object {
+                "Ref": "MyTestStackRestApi739A2852",
+              },
+              "/",
+              Object {
+                "Ref": "MyTestStackRestApiDeploymentStageprodABCD6224",
+              },
+              "/POST/slack/events",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "MyTestStackRestApislackeventsPOSTApiPermissionTestMyTestStackMyTestStackRestApi1CD3A8FAPOSTslackeventsD4BE02D2": Object {
+      "Properties": Object {
+        "Action": "lambda:InvokeFunction",
+        "FunctionName": Object {
+          "Fn::GetAtt": Array [
+            "MyTestStackLambdaE1C4A331",
+            "Arn",
+          ],
+        },
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "arn:",
+              Object {
+                "Ref": "AWS::Partition",
+              },
+              ":execute-api:",
+              Object {
+                "Ref": "AWS::Region",
+              },
+              ":",
+              Object {
+                "Ref": "AWS::AccountId",
+              },
+              ":",
+              Object {
+                "Ref": "MyTestStackRestApi739A2852",
+              },
+              "/test-invoke-stage/POST/slack/events",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::Permission",
+    },
+    "MyTestStackRestApislackeventsPOSTD005E2F3": Object {
+      "Properties": Object {
+        "AuthorizationType": "NONE",
+        "HttpMethod": "POST",
+        "Integration": Object {
+          "IntegrationHttpMethod": "POST",
+          "Type": "AWS_PROXY",
+          "Uri": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":apigateway:",
+                Object {
+                  "Ref": "AWS::Region",
+                },
+                ":lambda:path/2015-03-31/functions/",
+                Object {
+                  "Fn::GetAtt": Array [
+                    "MyTestStackLambdaE1C4A331",
+                    "Arn",
+                  ],
+                },
+                "/invocations",
+              ],
+            ],
+          },
+        },
+        "ResourceId": Object {
+          "Ref": "MyTestStackRestApislackevents0A81D4F3",
+        },
+        "RestApiId": Object {
+          "Ref": "MyTestStackRestApi739A2852",
+        },
+      },
+      "Type": "AWS::ApiGateway::Method",
     },
   },
 }

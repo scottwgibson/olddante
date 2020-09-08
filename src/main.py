@@ -1,10 +1,16 @@
 
+__name__ = '.'.join(__name__.split('/'))
+__package__ = '.'.join('.'.join(__name__.split('/')).split('.')[:-1])
+
 import boto3
 from pathlib import Path
 import os
 import random
 import _pickle as cPickle
 from flask import Flask
+import json
+from slack import WebClient
+from slackeventsapi import SlackEventAdapter
 
 s3 = boto3.client('s3')
 bucket = os.environ['bucketName']
@@ -12,7 +18,14 @@ key = 'markov.state'
 location = '/tmp/markov.state'
 s3.download_file(bucket, key, location)
 
+
+ssm = boto3.client('ssm')
+bot_token = ssm.get_parameter(Name='/olddante/slack/bot_token', WithDecryption=False)['Parameter']['Value']
+slack_secret = ssm.get_parameter(Name='/olddante/slack/signing_secret', WithDecryption=False)['Parameter']['Value']
+
 app = Flask(__name__)
+slack_events_adapter = SlackEventAdapter(slack_secret, "/slack/events", app)
+slack = WebClient(token=bot_token)
 
 class MarkovBot:
     MAXGEN = 1000
@@ -44,10 +57,22 @@ class MarkovBot:
 
         return text
 
+bot = MarkovBot(location = location)
+
+@slack_events_adapter.on("app_mention")
+def message(payload):
+    event = payload.get("event", {})
+
+    channel_id = event.get("channel")
+    user_id = event.get("user")
+    text = event.get("text")
+
+    slack.chat_postMessage(
+        channel=channel_id,
+        text=bot.generate())
+
 @app.route('/', methods=['GET', 'POST'])
 def basePath():
-    bot = MarkovBot(location = location)
-
     data = {
         'message': bot.generate()
     }
@@ -56,9 +81,3 @@ def basePath():
         200,
         {'Content-Type': 'application/json'}
     )
-
-if __name__ == "__main__":
-    logger = logging.getLogger()
-    logger.setLevel(logging.DEBUG)
-    logger.addHandler(logging.StreamHandler())
-    app.run(host="0.0.0.0", port="3000")

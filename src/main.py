@@ -3,14 +3,12 @@ __name__ = '.'.join(__name__.split('/'))
 __package__ = '.'.join('.'.join(__name__.split('/')).split('.')[:-1])
 
 import boto3
-from pathlib import Path
 import os
-import random
-import _pickle as cPickle
 from flask import Flask
 import json
 from slack import WebClient
 from slackeventsapi import SlackEventAdapter
+from markov import MarkovBot
 
 s3 = boto3.client('s3')
 bucket = os.environ['bucketName']
@@ -26,36 +24,6 @@ slack_secret = ssm.get_parameter(Name='/olddante/slack/signing_secret', WithDecr
 app = Flask(__name__)
 slack_events_adapter = SlackEventAdapter(slack_secret, "/slack/events", app)
 slack = WebClient(token=bot_token)
-
-class MarkovBot:
-    MAXGEN = 1000
-    NONWORD = '\n'
-
-    def __init__(self, location):
-        dataFile = open(location, 'rb')
-        self.dict = cPickle.load(dataFile, encoding='latin1')
-        return
-
-    def generate(self):
-        word1 = self.NONWORD
-        word2 = self.NONWORD
-        text = ""
-
-        for i in range(self.MAXGEN):
-            if (word1,word2) not in self.dict:
-                successorList = random.choice(self.dict.keys())
-            else:
-                successorList = self.dict[(word1,word2)]
-
-            word3 = random.choice(successorList)
-
-            if word3 == self.NONWORD:
-                break
-
-            text = text + " " + word3
-            word1, word2 = word2, word3
-
-        return text
 
 bot = MarkovBot(location = location)
 
